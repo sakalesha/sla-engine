@@ -1,0 +1,68 @@
+{
+    "status_updater": {
+      "data":[
+          {
+          "type": "functions",
+          "name": "get_mongo_master",
+          "input": [{"data": "user_input"}],
+          "output": 
+          [
+          {"status": "result"},
+          {"data": "data"}
+          ]
+        },
+          {
+          "type": "functions",
+          "name": "ticket_updator",
+          "input": [
+            {"data": "data"},
+            {"latest_status": "latest_status"},
+            {"remarks": "remarks"},
+            {"employee_id": "employee_id"}
+        ],
+          "output": 
+          [
+          {"updated_data": "updated_data"}
+          ]
+        },
+        {
+          "name": "update_dynamic_mongo_entry",
+          "type": "functions",
+          "input": [
+            {
+              "db_name": "db_name"
+            },
+            {
+              "master_name": "master_name"
+            },
+            {
+              "query_value": "query_value"
+            },
+            {
+              "updated_data": "updated_data"
+            }
+          ],
+          "output": [
+            {
+              "status": "status"
+            },
+            {
+              "modified_count": "modified_count"
+            }
+          ]
+        }
+      ],
+      "initialInput":[
+          "db_name",
+          "master_name",
+          "filter",
+          "latest_status",
+          "remarks",
+          "employee_id"
+      ],
+      "finalOutput":[
+          "status",
+          "message",
+          "complete_ticket"
+      ]},
+}
