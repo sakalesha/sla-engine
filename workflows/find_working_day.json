@@ -1,0 +1,47 @@
+{
+    "find_working_day" : {
+    "data" : [
+       {
+      "type": "functions",
+      "name": "get_mongo_master_with_cond_2",
+      "input": [
+          {
+            "db_name" : "db_name"
+          },
+          {
+            "master_name": "master_name"
+          }
+          
+      ],
+      "output": [
+          {
+            "data": "data"
+          }
+      ],
+      "function_type": "python"
+    },
+    {
+      "type": "functions",
+      "name": "get_working_day",
+      "input": [
+          {
+            "data" : "data"
+          }
+      ],
+      "output": [
+          {
+            "working_date": "working_date"
+          }
+      ],
+      "function_type": "python"
+    }
+    ],
+    "initialinput" : [
+          "db_name",
+          "master_name"
+    ],
+    "finaloutput" : [
+        "working_date"
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "type": "app-shell",
+  "defaultPage": "tkt-payment-gateway",
+  "hideShellOnPages": [],
+  "hideShellOnRoutes": []
+}

@@ -1,0 +1,54 @@
+{
+    "calendar_workflow": {
+    "data": [
+      {
+        "type": "functions",
+        "name": "get_mongo_master_with_cond_2",
+        "input": [
+          {
+            "db_name": "db_name"
+          },
+          {
+            "master_name": "master_name"
+          },
+          {
+            "filters": "filters"
+          }
+        ],
+        "output": [
+          {
+            "data": "data"
+          }
+        ],
+        "function_type": "python"
+      },
+      {
+        "type": "functions",
+        "name": "get_calendar_detail",
+        "input": [
+          {
+            "data": "data"
+          }
+        ],
+        "output": [
+          {
+            "Working_days": "working_days",
+            "start_time": "start_time",
+            "end_time": "end_time"
+          }
+        ],
+        "function_type": "python"
+      }
+    ],
+    "initialInput": [
+      "db_name",
+      "master_name",
+      "filter"
+    ],
+    "finaloutput": [
+        "Working_days",
+        "start_time",
+        "end_time"
+    ]
+  }
+}

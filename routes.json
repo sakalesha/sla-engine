@@ -1,0 +1,24 @@
+{
+  "routes": [
+    {
+      "path": "/tkt-payment-gateway",
+      "page": "tkt-payment-gateway.json"
+    },
+    {
+      "path": "/sla-levels",
+      "page": "sla-levels.json"
+    },
+    {
+      "path": "/sla-definitions",
+      "page": "sla-definitions.json"
+    },
+    {
+      "path": "/holiday",
+      "page": "holiday.json"
+    },
+    {
+      "path": "/slacalendar",
+      "page": "slacalendar.json"
+    }
+  ]
+}

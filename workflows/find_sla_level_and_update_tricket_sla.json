@@ -1,0 +1,111 @@
+{
+    "find_sla_level_and_update_tricket_sla": {
+  "data": [
+    {
+      "type": "functions",
+      "name": "get_mongo_master_with_cond_2",
+      "input": [
+        {
+          "db_name": "db_name"
+        },
+        {
+          "master_name": "master_name"
+        },
+        {
+          "filters": "filters"
+        }
+      ],
+      "output": [
+        {
+          "data": "data"
+        }
+      ],
+      "function_type": "python"
+    },
+    {
+      "type": "functions",
+      "name": "get_sla_level",
+      "input": [
+        {
+          "data": "data"
+        }
+      ],
+      "output": [
+        {
+          "response_minutes": "response_minutes"
+        },
+        {
+          "resolution_minutes": "resolution_minutes"
+        }
+      ],
+      "function_type": "python"
+    },
+    {
+      "type": "functions",
+      "name": "calculate_deadline",
+      "input": [
+        {
+          "response_minutes": "response_minutes"
+        },
+        {
+          "resolution_minutes": "resolution_minutes"
+        },
+        {
+          "working_date": "working_date"
+        }
+      ],
+      "output": [
+        {
+          "response_deadline": "response_deadline"
+        },
+        {
+          "resolution_deadline": "resolution_deadline"
+        }
+      ],
+      "function_type": "python"
+    },
+    {
+      "name": "update_dynamic_mongo_entry",
+      "type": "functions",
+      "input": [
+        {
+          "db_name": "db_name"
+        },
+        {
+          "master_name": "master_name"
+        },
+        {
+          "query_value": "query_value"
+        },
+        {
+          "updated_data": [
+            {
+              "resolution_deadline": "resolution_deadline"
+            },
+            {
+              "response_deadline": "response_deadline"
+            }
+          ]
+        }
+      ],
+      "output": [
+        {
+          "status": "status"
+        },
+        {
+          "modified_count": "modified_count"
+        }
+      ],
+      "function_type": "python"
+    }
+  ],
+  "initialInput": [
+    "db_name",
+    "master_name",
+    "filter"
+  ],
+  "finalOutput": [
+    "status"
+  ]
+}
+}

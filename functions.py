@@ -2,7 +2,10 @@ import requests
 
 def find_ticket(args):
 
-    tickets = args[0]
+    tickets = args[0][0]
+    # [
+    #     []
+    # ]
 
     ticket_type = tickets.get("ticket_type")
     priority = tickets.get("priority")
@@ -14,7 +17,7 @@ def find_ticket(args):
 
 
 def get_sla_definition(args):
-    ticket_type = args
+    ticket_type = args[0]
  
     api_url = "https://dev.assisto.tech/llm_api/execute_workflow"
  
@@ -41,7 +44,7 @@ def get_sla_definition(args):
     return {"definition_id": definition_id}
 
 def get_calendar_details(args):
-    calendar_details = args
+    calendar_details = args[0][0]
     working_days = calendar_details.get('working_days')
     start_time=calendar_details.get('start_time')
     end_time=calendar_details.get('end_time')
@@ -97,30 +100,58 @@ def get_sla_level(args):
 
     return{
         "resolution_minutes" : resolution_minutes,
-        "response_minutes" : response_minutes
+        "response_minutes" : response_minutes,
     }
+
+# def calculate_deadline(args):
+
+#     response_minutes = args[0]
+#     resolution_minutes = args[1]
+#     working_date = args[2]
+#     created_at = args[3]
+
+#     current_date = datetime.now().date()
+
+#     response_deadline = None
+#     resolution_deadline = None
+
+#     if current_date == working_date:
+#         current_time = datetime.now().strftime("%H:%M:%S")
+#         response_deadline = current_time + response_minutes
+#         resolution_deadline = current_time + resolution_minutes
+#     else:
+#         resolution_deadline = working_date + resolution_minutes
+#         response_deadline = working_date + response_minutes
+
+#     return{
+#         "updated_data" : {"sla" :  
+#           {
+#               "resolution_due": "resolution_deadline", 
+#               "response_due": "response_deadline"
+#           }
+#         }
+#     }
+
+# from datetime import datetime, timedelta
+
+from datetime import datetime, timedelta
 
 def calculate_deadline(args):
 
-    response_minutes = args[0]
-    resolution_minutes = args[1]
-    working_date = args[2]
+    response_minutes = int(args[0])
+    resolution_minutes = int(args[1])
+    created_at = args[3]
 
-    current_date = datetime.now().date()
+    created_at_dt = datetime.fromisoformat(created_at)
 
-    response_deadline = None
-    resolution_deadline = None
+    response_deadline = created_at_dt + timedelta(minutes=response_minutes)
+    resolution_deadline = created_at_dt + timedelta(minutes=resolution_minutes)
 
-    if current_date == working_date:
-        current_time = datetime.now().strftime("%H:%M:%S")
-        response_deadline = current_time + response_minutes
-        resolution_deadline = current_time + resolution_minutes
-    else:
-        resolution_deadline = "09:00" + resolution_minutes
-        response_deadline = "09:00" + response_minutes
-
-    return{
-        "response_deadline" : response_deadline,
-        "resolution_deadline" : resolution_deadline
+    return {
+        "updated_data": {
+            "sla": {
+                "resolution_due": resolution_deadline.strftime("%Y-%m-%dT%H:%M:%S"),
+                "response_due": response_deadline.strftime("%Y-%m-%dT%H:%M:%S")
+            }
+        }
     }
-

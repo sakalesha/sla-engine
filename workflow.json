@@ -3,7 +3,7 @@
     "data": [ 
     {
       "type": "functions",
-      "name": "get_mongo_master_with_cond_2",
+      "name": "get_mongo_master_new",
       "input": [
           {
             "db_name" : "db_name"
@@ -18,6 +18,9 @@
       "output": [
           {
             "data": "data"
+          },
+          {
+            "status" : "status"
           }
       ],
       "function_type": "python"
@@ -39,162 +42,23 @@
           }
       ],
       "function_type": "python"
-    },
-    {
-      "type": "functions",
-      "name": "get_sla_definition",
-      "input": [
-          {
-          "ticket_type" : "ticket_type"
-          }
-      ],
-      "output": [
-          {
-            "definition_id": "definition_id"
-          }
-      ],
-      "function_type": "python"
-    },
-    {
-      "name": "update_dynamic_mongo_entry",
-      "type": "functions",
-      "input": [
-          {
-            "db_name": "db_name"
-          },
-          {
-            "master_name": "master_name"
-          },
-          {
-            "query_value": "query_value"
-          },
-          {
-            "updated_data": "definition_id"
-          }
-        ],
-        "output": [
-          {
-            "status": "status"
-          },
-          {
-            "modified_count": "modified_count"
-          }
-        ]
     }
   ],
     "initialInput": [
       "db_name",
       "master_name",
-      "filter"
+      "filters"
     ],
     "finalOutput": [
-      "status",
-      "modified_count"
+      "priority",
+      "ticket_type"
     ]
   },
-
-  "calendar_workflow": {
-    "data": [
-      {
-        "type": "functions",
-        "name": "get_mongo_master_with_cond_2",
-        "input": [
-          {
-            "db_name": "db_name"
-          },
-          {
-            "master_name": "master_name"
-          },
-          {
-            "filters": "filters"
-          }
-        ],
-        "output": [
-          {
-            "data": "data"
-          }
-        ],
-        "function_type": "python"
-      },
-      {
-        "type": "functions",
-        "name": "get_calendar_detail",
-        "input": [
-          {
-            "data": "data"
-          }
-        ],
-        "output": [
-          {
-            "Working_days": "working_days",
-            "start_time": "start_time",
-            "end_time": "end_time"
-          }
-        ],
-        "function_type": "python"
-      }
-    ],
-    "initialInput": [
-      "db_name",
-      "master_name",
-      "filter"
-    ],
-    "finaloutput": [
-        "Working_days",
-        "start_time",
-        "end_time"
-    ]
-  },
-  "find_working_day" : {
-    "data" : [
-       {
-      "type": "functions",
-      "name": "get_mongo_master_with_cond_2",
-      "input": [
-          {
-            "db_name" : "db_name"
-          },
-          {
-            "master_name": "master_name"
-          }
-          
-      ],
-      "output": [
-          {
-            "data": "data"
-          }
-      ],
-      "function_type": "python"
-    },
-    {
-      "type": "functions",
-      "name": "get_working_day",
-      "input": [
-          {
-            "data" : "data"
-          }
-      ],
-      "output": [
-          {
-            "working_date": "working_date"
-          }
-      ],
-      "function_type": "python"
-    }
-    ],
-    "initialinput" : [
-          "db_name",
-          "master_name"
-    ],
-    "finaloutput" : [
-        "working_date"
-    ]
-  },
-  "find_sla_level": {
+  "get_sla_level_and_update_tricket": {
   "data": [
     {
       "type": "functions",
-      "name": "get_mongo_master_with_cond_2",
+      "name": "get_mongo_master_new",
       "input": [
         {
           "db_name": "db_name"
@@ -242,7 +106,7 @@
           "resolution_minutes": "resolution_minutes"
         },
         {
-          "working_date": "working_date"
+          "created_at" : "created_at"
         }
       ],
       "output": [
@@ -251,6 +115,9 @@
         },
         {
           "resolution_deadline": "resolution_deadline"
+        },
+        {
+          "updated_data" : "updated_data"
         }
       ],
       "function_type": "python"
@@ -260,23 +127,16 @@
       "type": "functions",
       "input": [
         {
-          "db_name": "db_name"
+          "db_name": "iffco"
         },
         {
-          "master_name": "master_name"
+          "master_name": "tickets"
         },
         {
           "query_value": "query_value"
         },
         {
-          "updated_data": [
-            {
-              "resolution_deadline": "resolution_deadline"
-            },
-            {
-              "response_deadline": "response_deadline"
-            }
-          ]
+          "updated_data": "updated_data"
         }
       ],
       "output": [
@@ -293,10 +153,137 @@
   "initialInput": [
     "db_name",
     "master_name",
-    "filter"
+    "filters",
+    "query_value",
+    "created_at"
   ],
   "finalOutput": [
     "status"
   ]
 }
 }
+
+
+
+
+
+
+
+"ticket_escalation_workflow": {
+    "data": [
+      {
+        "type": "functions",
+        "name": "get_all_tickets",
+        "input": [
+          {
+            "db_name": "db_name"
+          },
+          {
+            "master_name": "master_name"
+          },
+          {
+            "limit": "limit"
+          }
+        ],
+        "output": [
+          {
+            "tickets_list": "tickets_list"
+          }
+        ],
+        "function_type": "python"
+      },
+      {
+        "type": "functions",
+        "name": "find_escalation_candidates",
+        "input": [
+          {
+            "tickets_list": "tickets_list"
+          }
+        ],
+        "output": [
+          {
+            "escalation_list": "escalation_list"
+          },
+          {
+            "total_escalations": "total_escalations"
+          }
+        ],
+        "function_type": "python"
+      },
+      {
+        "type": "functions",
+        "name": "get_all_users",
+        "input": [],
+        "output": [
+          {
+            "users_list": "users_list"
+          }
+        ],
+        "function_type": "python"
+      },
+      {
+        "type": "functions",
+        "name": "escalate_tickets",
+        "input": [
+          {
+            "escalation_list": "escalation_list"
+          },
+          {
+            "users_list": "users_list"
+          }
+        ],
+        "output": [
+          {
+            "escalated_tickets": "escalated_tickets"
+          }
+        ],
+        "function_type": "python"
+      },
+      {
+        "type": "functions",
+        "name": "prepare_ticket_updates",
+        "input": [
+          {
+            "escalated_tickets": "escalated_tickets"
+          },
+          {
+            "tickets_list": "tickets_list"
+          }
+        ],
+        "output": [
+          {
+            "ticket_updates": "ticket_updates"
+          },
+          {
+            "count": "count"
+          }
+        ],
+        "function_type": "python"
+      },
+      {
+        "type": "functions",
+        "name": "update_tickets",
+        "input": [
+          {
+            "ticket_updates": "ticket_updates"
+          }
+        ],
+        "output": [
+          {
+            "results": "results"
+          }
+        ],
+        "function_type": "python"
+      }
+    ],
+    "initialInput": [
+      "db_name",
+      "limit",
+      "master_name"
+    ],
+    "finalOutput": [
+      "ticket_updates",
+      "count",
+      "total_escalations"
+    ]
+  },
