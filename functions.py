@@ -155,3 +155,188 @@ def calculate_deadline(args):
             }
         }
     }
+
+
+from datetime import datetime
+
+def dashboard_metrics(args):
+    """
+    Calculate dashboard metrics for ticket and SLA monitoring.
+
+    Input:
+    - args[0]: List of ticket documents
+
+    Metrics:
+    - total_tickets: Total number of tickets in the system
+    - active_slas: Tickets whose response and resolution SLAs are still within due time
+    - breached_slas: Tickets where either response SLA or resolution SLA has been breached
+    - response_sla_breached: Tickets that missed the response SLA
+    - resolution_sla_breached: Tickets that missed the resolution SLA
+    """
+
+    # Ticket collection passed by workflow
+    tickets = args[0][0]
+
+    # Total number of tickets returned from the collection
+    total_tickets = len(tickets)
+
+    # Count of tickets operating within SLA timelines
+    active_slas = 0
+
+    # Count of tickets where either SLA has been breached
+    breached_slas = 0
+
+    # Count of tickets that breached response SLA
+    response_sla_breached = 0
+
+    # Count of tickets that breached resolution SLA
+    resolution_sla_breached = 0
+
+    # Current UTC timestamp used for SLA comparison
+    now = datetime.utcnow()
+
+    # Process each ticket individually
+    for ticket in tickets:
+
+        # Ignore inactive tickets as they are no longer part of SLA tracking
+        if not ticket.get("is_active"):
+            continue
+
+        # Retrieve SLA details from the ticket
+        sla = ticket.get("sla", {})
+
+        # Response SLA deadline
+        response_due = sla.get("response_due")
+
+        # Resolution SLA deadline
+        resolution_due = sla.get("resolution_due")
+
+        # Flags used to determine whether SLAs are breached
+        response_breached = False
+        resolution_breached = False
+
+        # Check response SLA breach
+        if response_due:
+            response_due_time = datetime.fromisoformat(
+                response_due.replace("Z", "")
+            )
+
+            if response_due_time <= now:
+                response_breached = True
+                response_sla_breached += 1
+
+        # Check resolution SLA breach
+        if resolution_due:
+            resolution_due_time = datetime.fromisoformat(
+                resolution_due.replace("Z", "")
+            )
+
+            if resolution_due_time <= now:
+                resolution_breached = True
+                resolution_sla_breached += 1
+
+        # A ticket is considered breached if either
+        # response SLA or resolution SLA has been missed
+        if response_breached or resolution_breached:
+            breached_slas += 1
+        else:
+            active_slas += 1
+
+    # Return dashboard summary metrics
+    return {
+        "total_tickets": total_tickets,
+        "active_slas": active_slas,
+        "breached_slas": breached_slas,
+        "response_sla_breached": response_sla_breached,
+        "resolution_sla_breached": resolution_sla_breached
+    }
+
+from datetime import datetime
+
+def process_sla_breaches(args):
+    """
+    Process all active tickets and identify SLA breaches.
+
+    Input:
+    - args[0]: List of ticket documents
+
+    Output:
+    - List of ticket updates that need to be applied to the database
+    """
+
+    # Ticket collection passed by workflow
+    tickets = args[0][0]
+
+    # Store only tickets that require updates
+    updated_data = []
+
+    # Current UTC timestamp used for SLA comparison
+    now = datetime.utcnow()
+
+    # Process each ticket individually
+    for ticket in tickets:
+
+        # Ignore inactive tickets
+        if not ticket.get("is_active"):
+            continue
+
+        sla = ticket.get("sla", {})
+
+        response_due = sla.get("response_due")
+        resolution_due = sla.get("resolution_due")
+
+        latest_status = ticket.get("latest_status")
+
+        response_breached = False
+        resolution_breached = False
+
+        new_status = None
+        remarks = None
+
+        if response_due:
+            response_due_time = datetime.fromisoformat(
+                response_due.replace("Z", "")
+            )
+
+            if response_due_time <= now:
+                response_breached = True
+
+        if resolution_due:
+            resolution_due_time = datetime.fromisoformat(
+                resolution_due.replace("Z", "")
+            )
+
+            if resolution_due_time <= now:
+                resolution_breached = True
+
+        if resolution_breached:
+            new_status = "resolution_sla_breached"
+            remarks = "Resolution SLA breached by scheduled SLA monitor"
+
+        elif response_breached:
+            new_status = "response_sla_breached"
+            remarks = "Response SLA breached by scheduled SLA monitor"
+
+        if not new_status:
+            continue
+
+        if latest_status == new_status:
+            continue
+
+        updated_data.append({
+            "ticket_id": ticket["id"],
+            "updated_data": {
+                "latest_status": new_status,
+                "updated_by": "sla_cron_job",
+                "updated_at": now.strftime("%Y-%m-%dT%H:%M:%S"),
+                "status_history": ticket.get("status_history", []) + [{
+                    "status": new_status,
+                    "remarks": remarks
+                }]
+            }
+        })
+
+    # Return all updates to be applied
+    return {
+        "updated_data": updated_data
+    }

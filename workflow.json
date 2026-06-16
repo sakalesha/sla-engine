@@ -160,20 +160,105 @@
   "finalOutput": [
     "status"
   ]
-}
-}
-
-
-
-
-
-
-
-"ticket_escalation_workflow": {
-    "data": [
+  },
+  "dashboard_metrics" : {
+    "data" : [
+      {
+      "type": "functions",
+      "name": "get_mongo_master_new",
+      "input": [
+        {
+          "db_name": "db_name"
+        },
+        {
+          "master_name": "master_name"
+        }
+      ],
+      "output": [
+        {
+          "data": "data"
+        }
+      ],
+      "function_type": "python"
+    },
+    {
+      "type": "functions",
+      "name": "dashboard_metrics",
+      "input": [
+        {
+          "data" : "data"
+        }
+      ],
+      "output": [
+        {
+          "total_tickets": "total_tickets"
+        },
+        {
+          "active_slas" : "active_slas"
+        },
+        {
+          "breached_slas" : "breached_slas"
+        },
+        {
+          "response_sla_breached" : "response_sla_breached"
+        },
+        {
+          "resolution_sla_breached" : "resolution_sla_breached"
+        }
+      ],
+      "function_type": "python"
+    }
+    ],
+    "initialInput" : [
+      "db_name",
+      "master_name"
+    ],
+    "finalOutput" : [
+      "total_tickets",
+      "active_slas",
+      "breached_slas",
+      "response_sla_breached",
+      "resolution_sla_breached"
+    ]
+  },
+  "process_sla_breaches" : {
+    "data" : [
       {
         "type": "functions",
-        "name": "get_all_tickets",
+        "name": "get_mongo_master_new",
+        "input": [
+          {
+            "db_name": "db_name"
+          },
+          {
+            "master_name": "master_name"
+          }
+        ],
+        "output": [
+          {
+            "data": "data"
+          }
+        ],
+        "function_type": "python"
+      },
+      {
+        "type": "functions",
+        "name": "process_sla_breaches",
+        "input": [
+          {
+            "data" : "data"
+          }
+        ],
+        "output": [
+          {
+            "updated_data": "updated_data"
+          }
+        ],
+        "function_type": "python"
+      },
+      {
+        "name": "update_dynamic_mongo_entry",
+        "type": "functions",
         "input": [
           {
             "db_name": "db_name"
@@ -182,108 +267,29 @@
             "master_name": "master_name"
           },
           {
-            "limit": "limit"
-          }
-        ],
-        "output": [
-          {
-            "tickets_list": "tickets_list"
-          }
-        ],
-        "function_type": "python"
-      },
-      {
-        "type": "functions",
-        "name": "find_escalation_candidates",
-        "input": [
-          {
-            "tickets_list": "tickets_list"
-          }
-        ],
-        "output": [
-          {
-            "escalation_list": "escalation_list"
+            "query_value": "query_value"
           },
           {
-            "total_escalations": "total_escalations"
+            "updated_data": "updated_data"
           }
         ],
-        "function_type": "python"
-      },
-      {
-        "type": "functions",
-        "name": "get_all_users",
-        "input": [],
         "output": [
           {
-            "users_list": "users_list"
-          }
-        ],
-        "function_type": "python"
-      },
-      {
-        "type": "functions",
-        "name": "escalate_tickets",
-        "input": [
-          {
-            "escalation_list": "escalation_list"
+            "status": "status"
           },
           {
-            "users_list": "users_list"
+            "modified_count": "modified_count"
           }
-        ],
-        "output": [
-          {
-            "escalated_tickets": "escalated_tickets"
-          }
-        ],
-        "function_type": "python"
-      },
-      {
-        "type": "functions",
-        "name": "prepare_ticket_updates",
-        "input": [
-          {
-            "escalated_tickets": "escalated_tickets"
-          },
-          {
-            "tickets_list": "tickets_list"
-          }
-        ],
-        "output": [
-          {
-            "ticket_updates": "ticket_updates"
-          },
-          {
-            "count": "count"
-          }
-        ],
-        "function_type": "python"
-      },
-      {
-        "type": "functions",
-        "name": "update_tickets",
-        "input": [
-          {
-            "ticket_updates": "ticket_updates"
-          }
-        ],
-        "output": [
-          {
-            "results": "results"
-          }
-        ],
-        "function_type": "python"
+        ]
       }
     ],
-    "initialInput": [
+    "initialInput" : [
       "db_name",
-      "limit",
       "master_name"
     ],
-    "finalOutput": [
-      "ticket_updates",
-      "count",
-      "total_escalations"
+    "finalOutput" : [
+      "status",
+      "modified_count"
     ]
-  },
+  }
+}
