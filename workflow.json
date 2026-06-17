@@ -232,6 +232,9 @@
           },
           {
             "master_name": "master_name"
+          },
+          {
+            "filters" : "filters"
           }
         ],
         "output": [

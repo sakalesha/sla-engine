@@ -1,9 +1,9 @@
 {
-    "find_sla_level_and_update_tricket_sla": {
+  "get_sla_level_and_update_tricket": {
   "data": [
     {
       "type": "functions",
-      "name": "get_mongo_master_with_cond_2",
+      "name": "get_mongo_master_new",
       "input": [
         {
           "db_name": "db_name"
@@ -51,7 +51,7 @@
           "resolution_minutes": "resolution_minutes"
         },
         {
-          "working_date": "working_date"
+          "created_at" : "created_at"
         }
       ],
       "output": [
@@ -60,6 +60,9 @@
         },
         {
           "resolution_deadline": "resolution_deadline"
+        },
+        {
+          "updated_data" : "updated_data"
         }
       ],
       "function_type": "python"
@@ -69,23 +72,16 @@
       "type": "functions",
       "input": [
         {
-          "db_name": "db_name"
+          "db_name": "iffco"
         },
         {
-          "master_name": "master_name"
+          "master_name": "tickets"
         },
         {
           "query_value": "query_value"
         },
         {
-          "updated_data": [
-            {
-              "resolution_deadline": "resolution_deadline"
-            },
-            {
-              "response_deadline": "response_deadline"
-            }
-          ]
+          "updated_data": "updated_data"
         }
       ],
       "output": [
@@ -102,10 +98,12 @@
   "initialInput": [
     "db_name",
     "master_name",
-    "filter"
+    "filters",
+    "query_value",
+    "created_at"
   ],
   "finalOutput": [
     "status"
   ]
-}
+  }
 }

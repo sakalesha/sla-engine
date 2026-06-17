@@ -150,8 +150,12 @@ def calculate_deadline(args):
     return {
         "updated_data": {
             "sla": {
-                "resolution_due": resolution_deadline.strftime("%Y-%m-%dT%H:%M:%S"),
-                "response_due": response_deadline.strftime("%Y-%m-%dT%H:%M:%S")
+                "resolution_due": {
+                    "$date": resolution_deadline.strftime("%Y-%m-%dT%H:%M:%SZ")
+                },
+                "response_due": {
+                    "$date": response_deadline.strftime("%Y-%m-%dT%H:%M:%SZ")
+                }
             }
         }
     }
@@ -298,7 +302,7 @@ def process_sla_breaches(args):
                 response_due.replace("Z", "")
             )
 
-            if response_due_time <= now:
+            if response_due_time <= now & latest_status == "open":
                 response_breached = True
 
         if resolution_due:
@@ -306,7 +310,7 @@ def process_sla_breaches(args):
                 resolution_due.replace("Z", "")
             )
 
-            if resolution_due_time <= now:
+            if resolution_due_time <= now and (latest_status != "closed" or latest_status != "resolved"):
                 resolution_breached = True
 
         if resolution_breached:
